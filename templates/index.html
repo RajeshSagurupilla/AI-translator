@@ -3,25 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <title>AI Translator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 60%;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        select, button {
+            padding: 10px;
+            font-size: 1em;
+            margin: 10px 10px 10px 0;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .output {
+            margin-top: 20px;
+        }
+
+        #result-text {
+            font-weight: bold;
+            color: #444;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>🌍 AI Translator</h1>
-        <textarea id="text-input" placeholder="Enter text to translate..."></textarea>
-        <select id="model-select">
-            <option value="openai">Gpt-4o</option>
-            <option value="mixtral">Mixtral-8X7B</option>
-        </select>
-        <select id="language-select">
-            <option value="French">French</option>
-            <option value="Spanish">Spanish</option>
-            <option value="German">German</option>
-            <option value="Hindi">Hindi</option>
-            <option value="Japanese">Japanese</option>
-        </select>
 
-        <button onclick="translateText()">Translate</button>
+        <textarea id="text-input" placeholder="Enter text to translate..."></textarea>
+
+        <div>
+            <label for="language-select">Target Language:</label>
+            <select id="language-select">
+                <option value="French">French</option>
+                <option value="Spanish">Spanish</option>
+                <option value="German">German</option>
+                <option value="Hindi">Hindi</option>
+                <option value="Japanese">Japanese</option>
+            </select>
+
+            <label for="model-select">Model:</label>
+            <select id="model-select">
+                <option value="openai">OpenAI</option>
+                <option value="mixtral">Mixtral</option>
+            </select>
+
+            <button onclick="translateText()">Translate</button>
+        </div>
 
         <div class="output">
             <h3>Translation:</h3>
@@ -29,6 +95,27 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        async function translateText() {
+            const text = document.getElementById("text-input").value;
+            const targetLanguage = document.getElementById("language-select").value;
+            const model = document.getElementById("model-select").value;
+
+            const response = await fetch("/translate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    text: text,
+                    target_language: targetLanguage,
+                    model: model
+                }),
+            });
+
+            const result = await response.json();
+            document.getElementById("result-text").textContent = result.translated_text || result.error;
+        }
+    </script>
 </body>
 </html>

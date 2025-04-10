@@ -1,14 +1,14 @@
 from flask import Blueprint, render_template, request, jsonify
 from services.translator_service import translate_text
 
-translate = Blueprint('translate',__name__)
+translate_route = Blueprint('translate',__name__)
 
 
-@translate.route("/")
+@translate_route.route("/")
 def home():
     return render_template("index.html")
 
-@translate.route("/translate", methods=["POST"])
+@translate_route.route("/translate", methods=["POST"])
 def translate():
     data = request.get_json()
     text = data.get("text")
