@@ -13,7 +13,7 @@ def translate():
     data = request.get_json()
     text = data.get("text")
     target_lang = data.get("target_language")
-    model = data.get("model","mixtral")
+    model = data.get("model","gemini")
 
     if not text or not target_lang:
         return jsonify({"error": "Missing text or target language"}), 400

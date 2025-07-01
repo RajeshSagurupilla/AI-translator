@@ -1,7 +1,9 @@
 import openai
 from configurations import config
 import requests
-from configurations.config import OPENAI_API_KEY,MIXTRAL_API_KEY,MIXTRAL_API_URL
+from configurations.config import OPENAI_API_KEY,MIXTRAL_API_KEY,MIXTRAL_API_URL,GEMINI_API_KEY
+import google.generativeai as genai
+genai.configure(api_key=GEMINI_API_KEY)
 
 openai.api_key = config.OPENAI_API_KEY
 
@@ -19,6 +21,10 @@ def translate_text(text, target_language,model):
         }
         response = requests.post(MIXTRAL_API_URL, headers=headers, json=data)
         return response.json()["choices"][0]["message"]["content"].strip()
+    elif model=="gemini":
+        model = genai.GenerativeModel("gemini-1.5-flash")  # or "gemini-1.5-pro"
+        response = model.generate_content(prompt)
+        return response.text
     else:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
